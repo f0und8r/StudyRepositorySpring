@@ -1,14 +1,18 @@
 package com.example.service;
 
+import com.example.controller.UserController;
 import com.example.dto.UserCreateDto;
 import com.example.dto.UserDto;
 import com.example.entity.User;
 import com.example.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
 import java.util.List;
 import java.util.stream.Collectors;
+
+
 
 @Service
 @RequiredArgsConstructor
@@ -56,6 +60,12 @@ public class UserService {
         dto.setName(user.getName());
         dto.setEmail(user.getEmail());
         dto.setAge(user.getAge());
+
+        dto.add(linkTo(methodOn(UserController.class).getById(user.getId())).withSelfRel());
+        dto.add(linkTo(methodOn(UserController.class).getAll()).withRel("all-users"));
+        dto.add(linkTo(methodOn(UserController.class).update(user.getId(),null)).withRel("update"));
+        dto.add(linkTo(methodOn(UserController.class).delete(user.getId())).withRel("delete"));
+
         return dto;
     }
 }
